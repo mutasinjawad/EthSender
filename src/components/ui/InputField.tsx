@@ -16,11 +16,11 @@ export default function InputField({
   onChange,
 }: InputFieldProps) {
   const sharedClasses =
-    "w-full bg-[#0f0f0f] text-white placeholder-gray-600 border border-[#2a2a2a] rounded-lg px-4 py-2.5 font-mono text-sm focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-colors duration-200 resize-none";
+    "w-full bg-[#F3F3F1] placeholder-gray-600 border border-[#ececec] inset-shadow-xs/30 inset-shadow-[#c5c3c3] rounded-3xl px-4 py-2.5 text-sm focus:outline-none resize-none";
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-gray-400 font-mono text-sm">{label}</label>
+    <div className="flex flex-col gap-1.5 mt-6">
+      <label className="text-[#292929] text-[16px] mb-0.5">{label}</label>
       {large ? (
         <textarea
           className={`${sharedClasses} h-32`}
