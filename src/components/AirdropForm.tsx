@@ -136,7 +136,7 @@ export default function AirdropForm() {
     if (!mounted) return null;
     
     return (
-        <div className="px-4 py-10">
+        <div className="px-4 pb-10">
             <form className="bg-white p-6 rounded-3xl border border-[#ececec] shadow-xl/30 shadow-[#c5c3c3]">
                 <h2 className="text-[30px] mb-4 text-center">Airdrop Form</h2>
                 <InputField
@@ -163,9 +163,10 @@ export default function AirdropForm() {
                 <button
                     type="button"
                     onClick={handleSubmit}
-                    disabled={isPending || isConfirming}
-                    className="mt-8 w-full bg-[#2b2a2a] hover:bg-[#101010] disabled:bg-[#F3F5F9] disabled:text-[#818388] disabled:cursor-not-allowed text-white py-2 px-4 rounded-full transition-all duration-300">
-                        {isPending ? "Waiting for wallet..." 
+                    disabled={isPending || isConfirming || !account.isConnected }
+                    className="mt-8 w-full bg-[#2b2a2a] hover:bg-[#101010] disabled:bg-[#aaaaaa] disabled:text-[#747474] hover:cursor-pointer disabled:cursor-not-allowed text-white py-2 px-4 rounded-full transition-all duration-300">
+                        {!account.isConnected ? "Please connect your wallet first"
+                        : isPending ? "Waiting for wallet..." 
                         : isConfirming ? "Confirming transaction..." 
                         : isConfirmed ? "Airdrop sent! ✓" 
                         : "Send Airdrop"}

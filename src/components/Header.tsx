@@ -2,9 +2,9 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-100 flex items-center justify-between px-4 h-16 max-w-260 mx-auto">
+    <header className="sticky top-0 z-100 flex items-center justify-between px-4 py-16 h-16 max-w-260 mx-auto">
       <div className="flex items-center gap-5">
-        <div className="text-[#292929] font-bold text-lg tracking-tight">
+        <div className="text-[#292929] font-bold text-xl tracking-tight">
           ETHSender
         </div>
 
@@ -21,7 +21,7 @@ export default function Header() {
         </a>
       </div>
 
-      <ConnectButton />
+      <ConnectButton showBalance={false} />
     </header>
   );
 }

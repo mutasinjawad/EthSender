@@ -20,7 +20,7 @@ export default function InputField({
 
   return (
     <div className="flex flex-col gap-1.5 mt-6">
-      <label className="text-[#292929] text-[16px] mb-0.5">{label}</label>
+      <label className="text-[#696969] text-[16px] mb-0.5">{label}</label>
       {large ? (
         <textarea
           className={`${sharedClasses} h-32`}
