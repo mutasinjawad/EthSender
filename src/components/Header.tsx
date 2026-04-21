@@ -2,7 +2,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Header() {
   return (
-    <header className="flex items-center justify-between px-4 pt-16 max-w-260 mx-auto">
+    <header className="flex items-center justify-between px-4 lg:pt-16 pt-6 max-w-260 mx-auto">
       <div className="flex items-center gap-5">
         <div className="text-black font-bold text-xl tracking-tight">
           ETHSender
