@@ -5,11 +5,11 @@ export default function Header() {
     <header className="flex items-center justify-between px-4 lg:pt-16 pt-6 max-w-260 mx-auto">
       <div className="flex items-center gap-5">
         <div className="text-black font-bold text-xl tracking-tight">
-          ETHSender
+          AirSend
         </div>
 
         <a
-          href="https://github.com"
+          href="https://github.com/mutasinjawad/EthSender"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub"

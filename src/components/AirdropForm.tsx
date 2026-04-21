@@ -156,7 +156,7 @@ export default function AirdropForm() {
     return (
         <div className="px-4 pb-10">
             <div className="flex lg:flex-row flex-col justify-between lg:items-end items-start lg:gap-2 gap-6 lg:my-16 my-10">
-                <h1 className="sm:text-7xl text-5xl font-semibold tracking-tight text-black">Airdrop Form</h1>
+                <h1 className="sm:text-7xl text-5xl font-semibold tracking-tight text-black">AirSend Form</h1>
                 <p className="text-[16px] text-[#404040] max-w-87.5 lg:text-right tracking-tight leading-tight">
                     Want to send tokens to multiple people? Just select the coin, paste their details, and we will handle the rest in one simple step.
                 </p>
