@@ -3,14 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
-  output: 'export',
-  distDir: 'out',
-  images: {
-    unoptimized: true,
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
   },
-  basePath: '',
-  assetPrefix: './',
-  trailingSlash: true,
 };
 
 export default nextConfig;

@@ -4,9 +4,12 @@ import { useMemo, useState, useEffect, use } from "react";
 import { useChainId, useConfig, useAccount, useWriteContract, useReadContract } from 'wagmi';
 import { readContract, waitForTransactionReceipt } from "@wagmi/core";
 import { chainsToTSender, erc20Abi, tsenderAbi } from "@/constants";
+
 import InputField from "./ui/InputField";
 import Summary from "./ui/Summary";
+
 import { calculateTotal } from "@/utils";
+import { LinkIcon, ArrowIcon, CheckIcon, LoadingIcon } from "@/components/icons";
 
 export default function AirdropForm() {
     const chainId = useChainId();
@@ -47,6 +50,7 @@ export default function AirdropForm() {
 
     const [isConfirming, setIsConfirming] = useState(false);
     const [isConfirmed, setIsConfirmed] = useState(false);
+    const [isSubmitButtonHovered, setIsSubmitButtonHovered] = useState(false);
 
     async function getApprrovedAmount(tSenderAddress: string | null): Promise<number> {
         if (!tSenderAddress) {
@@ -54,14 +58,21 @@ export default function AirdropForm() {
             return 0;
         }
 
-        const response = await readContract(config, {
-            abi: erc20Abi,
-            address: tokenAddress as `0x${string}`,
-            functionName: "allowance",
-            args: [account.address, tSenderAddress as `0x${string}`],
-        })
+        try {
+            const response = await readContract(config, {
+                abi: erc20Abi,
+                address: tokenAddress as `0x${string}`,
+                functionName: "allowance",
+                args: [account.address, tSenderAddress as `0x${string}`],
+            })
+            console.log("Approved Amount:", response);
+            return response as number;
+        } catch (err) {
+            console.error("Error fetching approved amount:", err);
+            alert("Error fetching approved amount, please check the console for more details.");
+            return 0;
+        }
 
-        return response as number;
     }
 
     async function handleSubmit() {
@@ -137,8 +148,13 @@ export default function AirdropForm() {
     
     return (
         <div className="px-4 pb-10">
-            <form className="bg-white p-6 rounded-3xl border border-[#ececec] shadow-xl/30 shadow-[#c5c3c3]">
-                <h2 className="text-[30px] mb-4 text-center">Airdrop Form</h2>
+            <div className="flex lg:flex-row flex-col justify-between lg:items-end items-start lg:gap-2 gap-6 my-16">
+                <h1 className="sm:text-7xl text-5xl font-semibold tracking-tight text-black">Airdrop Form</h1>
+                <p className="text-[16px] text-[#404040] max-w-87.5 lg:text-right tracking-tight leading-tight">
+                    Want to send tokens to multiple people? Just select the coin, paste their details, and we will handle the rest in one simple step.
+                </p>
+            </div>
+            <form className="bg-[#fafafa] p-6 rounded-3xl flex flex-col gap-6">
                 <InputField
                     label="Token Address"
                     placeholder="0x..."
@@ -164,12 +180,23 @@ export default function AirdropForm() {
                     type="button"
                     onClick={handleSubmit}
                     disabled={isPending || isConfirming || !account.isConnected }
-                    className="mt-8 w-full bg-[#2b2a2a] hover:bg-[#101010] disabled:bg-[#aaaaaa] disabled:text-[#747474] hover:cursor-pointer disabled:cursor-not-allowed text-white py-2 px-4 rounded-full transition-all duration-300">
-                        {!account.isConnected ? "Please connect your wallet first"
-                        : isPending ? "Waiting for wallet..." 
-                        : isConfirming ? "Confirming transaction..." 
-                        : isConfirmed ? "Airdrop sent! ✓" 
-                        : "Send Airdrop"}
+                    onMouseEnter={() => setIsSubmitButtonHovered(true)}
+                    onMouseLeave={() => setIsSubmitButtonHovered(false)}
+                    className="group flex gap-1 hover:cursor-pointer disabled:cursor-not-allowed text-white transition-all text-[16px] duration-300 h-12.5">
+                        <div className="h-full px-8 flex items-center justify-center rounded-full bg-black group-disabled:bg-[#404040] group-disabled:text-white">
+                            {!account.isConnected ? "Connect Your Wallet"
+                            : isPending ? "Waiting For Confirmation" 
+                            : isConfirming ? "Confirming Transaction" 
+                            : isConfirmed ? "Airdrop Sent!" 
+                            : "Send Airdrop"}
+                        </div>
+                        <div className="h-full w-12.5 flex items-center justify-center rounded-full bg-black group-disabled:bg-[#404040] group-disabled:text-white">
+                            {!account.isConnected ? <LinkIcon />
+                            : isPending ? <LoadingIcon />
+                            : isConfirming ? <LoadingIcon /> 
+                            : isConfirmed ? <CheckIcon /> 
+                            : <ArrowIcon rotate={isSubmitButtonHovered} /> }
+                        </div>
                 </button>
             </form>
         </div>
