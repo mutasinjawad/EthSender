@@ -1,11 +1,10 @@
 interface SummaryProps {
     tokenName: string;
     amountInWei: number;
+    amountInToken: string | undefined;
 }
 
-export default function Summary({ tokenName, amountInWei }: SummaryProps) {
-
-    const amountInTokens = amountInWei / 1e18;
+export default function Summary({ tokenName, amountInWei, amountInToken }: SummaryProps) {
 
     return (
         <div className="flex flex-col gap-1.5">
@@ -26,7 +25,7 @@ export default function Summary({ tokenName, amountInWei }: SummaryProps) {
                 {/* Amount in tokens  */}
                 <div className="flex justify-between">
                     <span>Amount in Tokens:</span>
-                    <span>{amountInTokens.toFixed(2)}</span>
+                    <span>{amountInToken}</span>
                 </div>
             </div>
         </div>

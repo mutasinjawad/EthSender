@@ -8,7 +8,7 @@ import { chainsToTSender, erc20Abi, tsenderAbi } from "@/constants";
 import InputField from "./ui/InputField";
 import Summary from "./ui/Summary";
 
-import { calculateTotal, validateInputs } from "@/utils";
+import { calculateTotal, calculateWeiToToken, validateInputs } from "@/utils";
 import { LinkIcon, ArrowIcon, CheckIcon, LoadingIcon, InfoIcon } from "@/components/icons";
 
 export default function AirdropForm() {
@@ -47,6 +47,16 @@ export default function AirdropForm() {
             enabled: tokenAddress.length === 42 && tokenAddress.startsWith("0x")
         }
     });
+    const decimals = useReadContract({
+        abi: erc20Abi,
+        address: tokenAddress as `0x${string}`,
+        functionName: "decimals",
+        query: {
+            enabled: tokenAddress.length === 42 && tokenAddress.startsWith("0x")
+        }
+    });
+
+    const weiToToken = useMemo(() => calculateWeiToToken(decimals.data as number | undefined, totalAmmount), [totalAmmount, decimals.data]);
 
     const [isConfirming, setIsConfirming] = useState(false);
     const [isConfirmed, setIsConfirmed] = useState(false);
@@ -77,7 +87,7 @@ export default function AirdropForm() {
     }
 
     async function handleSubmit() {
-        const isInputValid = validateInputs(tokenAddress, recipient, amount, tokenName as string);
+        const isInputValid = validateInputs(tokenAddress, recipient, amount);
         if (!isInputValid.valid) {
             setErrorMessage(isInputValid.message);
             return;
@@ -182,7 +192,7 @@ export default function AirdropForm() {
                     large={true}
                     onChange={(e) => setAmount(e.target.value)}
                 />
-                <Summary tokenName={(tokenName as string) || ""} amountInWei={totalAmmount} />
+                <Summary tokenName={(tokenName as string) || ""} amountInWei={totalAmmount} amountInToken={weiToToken} />
                 <div className="w-full flex flex-col md:flex-row md:gap-8 gap-4 justify-between md:items-center">
                     <button
                         type="button"

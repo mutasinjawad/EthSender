@@ -1,7 +1,7 @@
 import { isAddress } from "viem";
 
-export function validateInputs(tokenAddress: string, recipient: string, amount: string, tokenName: string | undefined): { message: string, valid: boolean } {
-    if (!isAddress(tokenAddress) || tokenName === undefined) {
+export function validateInputs(tokenAddress: string, recipient: string, amount: string): { message: string, valid: boolean } {
+    if (!isAddress(tokenAddress)) {
         return { message: "Please enter a valid token address", valid: false };
     }
     const recipientAddresses = recipient.split(/[,\n]+/).map(addr => addr.trim()).filter(addr => addr !== '');
