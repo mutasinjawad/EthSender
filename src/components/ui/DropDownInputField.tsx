@@ -12,21 +12,23 @@ interface DropDownInputFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
-export default function DropDownInputField({
-  label,
-  placeholder,
-  type = "text",
-  value,
-  chainId,
-  onChange,
-}: DropDownInputFieldProps) {
+interface DropDownModalProps {
+  tokens: { name: string; address: string }[];
+  value: string;
+  onTokenSelect: (token: { name: string; address: string }) => void;
+  className?: string;
+}
+
+export default function DropDownInputField({ label, placeholder, type = "text", value, chainId, onChange,}: DropDownInputFieldProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const tokens = tokensByChain[chainId] ?? [];
 
   const handleTokenSelect = (token: { name: string; address: string }) => {
     onChange({ target: { value: token.address } } as React.ChangeEvent<HTMLInputElement>);
-    setIsDropdownOpen(false);
+    setTimeout(() => {
+      setIsDropdownOpen(false);
+    }, 200);
   };
 
   return (
@@ -55,34 +57,58 @@ export default function DropDownInputField({
           <DropDownIcon />
         </div>
 
-        {/* Dropdown Options */}
-        {isDropdownOpen && tokens.length > 0 && (
-          <ul className="absolute top-full left-0 mt-1 w-full bg-white border border-zinc-500 rounded-2xl z-10 overflow-hidden px-2 py-1">
-            {tokens.map((token) => (
-              <li
-                key={token.address}
-                className={`flex items-center justify-between py-2.5 rounded-xl cursor-pointer gap-3 transition-colors duration-400 text-sm font-fira-code px-3 ${token.address === value ? "bg-[#ECFDCC] text-[#6fac15]" : "text-[#a6a6a6] hover:bg-[#f2f2f2]"}`}
-                onClick={() => handleTokenSelect(token)}
-              >
-                <span className="truncate max-w-45">{token.address.slice(0, 6)}...{token.address.slice(-4)}</span>
-                {token.address === value ? (
-                  <CheckIcon />
-                ) : (
-                  <span>
-                    {token.name}
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        {isDropdownOpen && tokens.length === 0 && (
-          <div className="absolute top-full left-0 mt-1 w-full bg-white border border-zinc-500 rounded-2xl z-10 overflow-hidden px-4 py-3">
-            <span className="text-sm font-fira-code text-[#9c3737]">No tokens for this chain</span>
-          </div>
-        )}
+        {/* Dropdown Modal */}
+        <div className={`absolute top-full left-0 w-full ${isDropdownOpen ? "z-10" : "z-[-1]"} overflow-hidden`}>
+          <DropDownModal tokens={tokens} value={value} onTokenSelect={handleTokenSelect} className={`transition-all ease-in-out duration-400 ${isDropdownOpen ? "opcaity-100 translate-y-0 pointer-events-auto" : "opcaity-0 -translate-y-[105%] pointer-events-none"}`}/>
+        </div>
       </div>
     </div>
   );
+}
+
+export function DropDownModal({tokens, value, onTokenSelect, className}: DropDownModalProps) {
+  return (
+    <>
+      {/* If tokens exist */}
+      {tokens.length > 0 ? (
+        <ul className={`mt-1 w-full bg-white border border-zinc-500 rounded-2xl overflow-hidden px-2 py-1 ${className}`}>
+          {tokens.map((token) => (
+            <div key={token.address}>
+
+              {/* If token is selected */}
+              {token.address === value ? (
+                <li
+                  className="flex items-center justify-between py-2.5 rounded-xl cursor-pointer gap-3 transition-colors duration-400 text-sm font-fira-code px-3 bg-[#ECFDCC] text-[#6fac15]"
+                  onClick={() => onTokenSelect(token)}
+                >
+                  <div className="flex gap-2 items-center justify-center">
+                    <CheckIcon className="w-4 h-4"/>
+                    <span className="truncate max-w-45">{token.address.slice(0, 6)}...{token.address.slice(-4)}</span>
+                  </div>
+                  <span>{token.name}</span>
+                </li>
+
+              ) : (
+
+              // If token is not selected
+                <li
+                  className="flex items-center justify-between py-2.5 rounded-xl cursor-pointer gap-3 transition-colors duration-400 text-sm font-fira-code px-3 text-[#a6a6a6] hover:bg-[#f2f2f2]"
+                  onClick={() => onTokenSelect(token)}
+                >
+                  <span className="truncate max-w-45">{token.address.slice(0, 6)}...{token.address.slice(-4)}</span>
+                  <span>{token.name}</span>
+                </li>
+              )}
+
+            </div>
+          ))}
+        </ul>    
+      ) : (
+      // If tokens do not exist for the selected chain
+        <div className="absolute top-full left-0 mt-1 w-full bg-white border border-zinc-500 rounded-2xl z-10 overflow-hidden px-4 py-3">
+          <span className="text-sm font-fira-code text-[#9c3737]">No tokens for this chain</span>
+        </div>
+      )}
+    </>
+  )
 }

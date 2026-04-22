@@ -60,6 +60,7 @@ export default function AirdropForm() {
     const weiToToken = useMemo(() => calculateWeiToToken(decimals.data as number | undefined, totalAmmount), [totalAmmount, decimals.data]);
 
     const [isConfirming, setIsConfirming] = useState(false);
+    const [isGettingApp, setIsGettingApp] = useState(false);
     const [isConfirmed, setIsConfirmed] = useState(false);
     const [isSubmitButtonHovered, setIsSubmitButtonHovered] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -94,7 +95,7 @@ export default function AirdropForm() {
             return;
         }
 
-        setIsConfirming(false);
+        setIsConfirming(true);
         setIsConfirmed(false);
         const tSenderAddress = chainsToTSender[chainId]['tsender'];
         const approvedAmount = await getApprrovedAmount(tSenderAddress);
@@ -102,6 +103,7 @@ export default function AirdropForm() {
         // If the approved amount is less than the total amount to be airdropped, we need to approve the tSender contract first
         if (approvedAmount < totalAmmount) {
 
+            setIsGettingApp(true);
             // Approve the tSender contract
             const approvalHash = await writeContractAsync({
                 abi: erc20Abi,
@@ -109,11 +111,10 @@ export default function AirdropForm() {
                 functionName: "approve",
                 args: [tSenderAddress as `0x${string}`, BigInt(totalAmmount)],
             })
-            setIsConfirming(true);
             const approvalReceipt = await waitForTransactionReceipt(config, {
                 hash: approvalHash
             });
-            console.log("Approval Receipt:", approvalReceipt);
+            setIsGettingApp(false);
 
             // Airdropping tokens
             await writeContractAsync({
@@ -174,16 +175,10 @@ export default function AirdropForm() {
             </div>
             <form className="bg-[#fafafa] sm:p-6 p-4 rounded-3xl flex flex-col gap-6">
                 <DropDownInputField
-                    label="Select Network"
-                    placeholder="Select Network"
+                    label="Token Address"
+                    placeholder="Select or Enter Token Address (0x...)"
                     value={tokenAddress}
                     chainId={chainId}
-                    onChange={(e) => setTokenAddress(e.target.value)}
-                />
-                <InputField
-                    label="Token Address"
-                    placeholder="0x..."
-                    value={tokenAddress}
                     onChange={(e) => setTokenAddress(e.target.value)}
                 />
                 <InputField
@@ -195,7 +190,7 @@ export default function AirdropForm() {
                 />
                 <InputField
                     label="Amount (Wei)"
-                    placeholder="0.00"
+                    placeholder="0.0000"
                     value={amount}
                     large={true}
                     onChange={(e) => setAmount(e.target.value)}
@@ -211,6 +206,7 @@ export default function AirdropForm() {
                         className="group flex-nowrap flex gap-1 hover:cursor-pointer disabled:cursor-not-allowed text-white transition-all text-[16px] duration-300 h-12.5">
                             <div className="h-full sm:px-8 px-4 flex flex-1 sm:flex-none items-center justify-center rounded-full bg-black group-disabled:bg-[#404040] group-disabled:text-white text-left">
                                 {!account.isConnected ? "Connect Your Wallet"
+                                : isGettingApp ? "Getting Approval"
                                 : isPending ? "Waiting For Confirmation" 
                                 : isConfirming ? "Confirming Transaction" 
                                 : isConfirmed ? "Airdrop Sent!" 
@@ -218,6 +214,7 @@ export default function AirdropForm() {
                             </div>
                             <div className="h-full w-12.5 flex flex-nowrap items-center justify-center rounded-full bg-black group-disabled:bg-[#404040] group-disabled:text-white">
                                 {!account.isConnected ? <LinkIcon />
+                                : isGettingApp ? <LoadingIcon />
                                 : isPending ? <LoadingIcon />
                                 : isConfirming ? <LoadingIcon /> 
                                 : isConfirmed ? <CheckIcon /> 
