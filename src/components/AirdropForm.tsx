@@ -7,6 +7,7 @@ import { chainsToTSender, erc20Abi, tsenderAbi } from "@/constants";
 
 import InputField from "./ui/InputField";
 import Summary from "./ui/Summary";
+import DropDownInputField from "./ui/DropDownInputField";
 
 import { calculateTotal, calculateWeiToToken, validateInputs } from "@/utils";
 import { LinkIcon, ArrowIcon, CheckIcon, LoadingIcon, InfoIcon } from "@/components/icons";
@@ -172,6 +173,13 @@ export default function AirdropForm() {
                 </p>
             </div>
             <form className="bg-[#fafafa] sm:p-6 p-4 rounded-3xl flex flex-col gap-6">
+                <DropDownInputField
+                    label="Select Network"
+                    placeholder="Select Network"
+                    value={tokenAddress}
+                    chainId={chainId}
+                    onChange={(e) => setTokenAddress(e.target.value)}
+                />
                 <InputField
                     label="Token Address"
                     placeholder="0x..."

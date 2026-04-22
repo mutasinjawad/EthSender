@@ -16,7 +16,7 @@ export default function InputField({
   onChange,
 }: InputFieldProps) {
   const sharedClasses =
-    "w-full bg-[#F2F2F2] placeholder:text-[#a6a6a6] rounded-2xl px-4 py-2.5 text-sm focus:outline-none resize-none focus:ring-1 focus:ring-black transition-all duration-200";
+    "w-full bg-[#F2F2F2] placeholder:text-[#a6a6a6] rounded-2xl px-4 py-2.5 text-sm focus:outline-none resize-none focus:ring-1 focus:ring-zinc-500 transition-all duration-200";
 
   return (
     <div className="flex flex-col gap-1.5">
