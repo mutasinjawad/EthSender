@@ -2,6 +2,7 @@ import {
     UserRejectedRequestError,
     InsufficientFundsError,
     ContractFunctionRevertedError,
+    ContractFunctionExecutionError,
     TransactionNotFoundError,
     WaitForTransactionReceiptTimeoutError,
     ChainMismatchError,
@@ -50,6 +51,13 @@ export function getErrorMessage(err: unknown): string {
     if (err instanceof ContractFunctionRevertedError) {
         const reason = err.data?.errorName ?? err.shortMessage ?? err.message;
         return `Transaction reverted: ${reason}`;
+    }
+
+    // Contract execution (e.g., RPC timeouts during contract calls)
+    if (err instanceof ContractFunctionExecutionError) {
+        if (err.message.includes("Transport request timed out") || err.message.includes("RPCErr53")) {
+            return "RPC network timeout — the node took too long to respond. Please try again or switch your network's RPC URL.";
+        }
     }
 
     // Timeouts

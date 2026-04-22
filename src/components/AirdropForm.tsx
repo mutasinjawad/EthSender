@@ -232,7 +232,7 @@ export default function AirdropForm() {
                         onMouseEnter={() => setIsSubmitButtonHovered(true)}
                         onMouseLeave={() => setIsSubmitButtonHovered(false)}
                         className="group flex-nowrap flex gap-1 hover:cursor-pointer disabled:cursor-not-allowed text-white transition-all text-[16px] duration-300 h-12.5">
-                            <div className="h-full sm:px-8 px-4 flex flex-1 sm:flex-none items-center justify-center rounded-full bg-black group-disabled:bg-[#404040] group-disabled:text-white text-left">
+                            <div className="h-full sm:px-8 px-4 flex flex-1 sm:flex-none items-center justify-center rounded-full bg-black group-disabled:bg-[#d1d1d1] group-disabled:text-[#a6a6a6] text-left">
                                 {!account.isConnected ? "Connect Your Wallet"
                                 : isGettingApp ? "Getting Approval"
                                 : isPending ? "Waiting For Confirmation" 
@@ -240,7 +240,7 @@ export default function AirdropForm() {
                                 : isConfirmed ? "Airdrop Sent!" 
                                 : "Send Airdrop"}
                             </div>
-                            <div className="h-full w-12.5 flex flex-nowrap items-center justify-center rounded-full bg-black group-disabled:bg-[#404040] group-disabled:text-white">
+                            <div className="h-full w-12.5 flex flex-nowrap items-center justify-center rounded-full bg-black group-disabled:bg-[#d1d1d1] group-disabled:text-[#a6a6a6]">
                                 {!account.isConnected ? <LinkIcon />
                                 : isGettingApp ? <LoadingIcon />
                                 : isPending ? <LoadingIcon />
@@ -251,8 +251,8 @@ export default function AirdropForm() {
                     </button>
                     {errorMessage &&
                         <div className="flex-1 flex w-full md:justify-end">
-                            <div className="flex gap-2 items-center justify-center bg-[#ffe1de] rounded-xl w-fit sm:px-4 px-3 py-2 text-[#DE3A43] text-[16px] lg:text-right tracking-tight leading-tight">
-                                <InfoIcon className="w-4 h-4 flex-nowrap" />
+                            <div className="flex gap-3 items-center justify-center bg-[#ffe1de] rounded-xl w-fit sm:px-4 px-2 py-2 text-[#DE3A43] text-[16px] lg:text-right tracking-tight leading-tight">
+                                <InfoIcon className="w-4 h-4 flex-nowrap min-w-4" />
                                 <p>{errorMessage}</p>
                             </div>
                         </div>

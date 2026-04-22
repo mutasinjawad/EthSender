@@ -1,6 +1,6 @@
 export default function LoadingIcon() {
     
-    const sharedClasses = "loading-bar w-[1px] h-[10px] mx-[2px] bg-white rounded-md";
+    const sharedClasses = "loading-bar w-[1px] h-[10px] mx-[2px] bg-[#a6a6a6] rounded-md";
     
     return (
         <>
