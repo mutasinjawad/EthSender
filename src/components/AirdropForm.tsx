@@ -9,7 +9,7 @@ import InputField from "./ui/InputField";
 import Summary from "./ui/Summary";
 import DropDownInputField from "./ui/DropDownInputField";
 
-import { calculateTotal, calculateWeiToToken, validateInputs } from "@/utils";
+import { calculateTotal, calculateWeiToToken, validateInputs, getErrorMessage } from "@/utils";
 import { LinkIcon, ArrowIcon, CheckIcon, LoadingIcon, InfoIcon } from "@/components/icons";
 
 export default function AirdropForm() {
@@ -81,8 +81,9 @@ export default function AirdropForm() {
             console.log("Approved Amount:", response);
             return response as number;
         } catch (err) {
+            const errMessage = getErrorMessage(err);
+            setErrorMessage(errMessage);
             console.error("Error fetching approved amount:", err);
-            alert("Error fetching approved amount, please check the console for more details.");
             return 0;
         }
 
@@ -105,57 +106,84 @@ export default function AirdropForm() {
 
             setIsGettingApp(true);
             // Approve the tSender contract
-            const approvalHash = await writeContractAsync({
-                abi: erc20Abi,
-                address: tokenAddress as `0x${string}`,
-                functionName: "approve",
-                args: [tSenderAddress as `0x${string}`, BigInt(totalAmmount)],
-            })
-            const approvalReceipt = await waitForTransactionReceipt(config, {
-                hash: approvalHash
-            });
-            setIsGettingApp(false);
+            try {
+                const approvalHash = await writeContractAsync({
+                    abi: erc20Abi,
+                    address: tokenAddress as `0x${string}`,
+                    functionName: "approve",
+                    args: [tSenderAddress as `0x${string}`, BigInt(totalAmmount)],
+                })
+                console.log("Approval Transaction Hash:", approvalHash);
+
+                const approvalReceipt = await waitForTransactionReceipt(config, {
+                    hash: approvalHash
+                });
+                setIsGettingApp(false);
+            } catch (err) {
+                const errMessage = getErrorMessage(err);
+                setErrorMessage(errMessage);
+                console.log("Error during approval:", err);
+                setIsGettingApp(false);
+                setIsConfirming(false);
+                return;
+            }
 
             // Airdropping tokens
-            await writeContractAsync({
-                abi: tsenderAbi,
-                address: tSenderAddress as `0x${string}`,
-                functionName: "airdropERC20",
-                args: [
-                    tokenAddress,
-                    // Comma or new line separated
-                    recipient.split(/[,\n]+/).map(addr => addr.trim()).filter(addr => addr !== ''),
-                    amount.split(/[,\n]+/).map(amt => amt.trim()).filter(amt => amt !== ''),
-                    BigInt(totalAmmount),
-                ],
-            })
-            setIsConfirming(false);
-            setIsConfirmed(true);
-            localStorage.removeItem("recipient");
-            localStorage.removeItem("amount");
-            localStorage.removeItem("tokenAddress");
+            try {
+                await writeContractAsync({
+                    abi: tsenderAbi,
+                    address: tSenderAddress as `0x${string}`,
+                    functionName: "airdropERC20",
+                    args: [
+                        tokenAddress,
+                        // Comma or new line separated
+                        recipient.split(/[,\n]+/).map(addr => addr.trim()).filter(addr => addr !== ''),
+                        amount.split(/[,\n]+/).map(amt => amt.trim()).filter(amt => amt !== ''),
+                        BigInt(totalAmmount),
+                    ],
+                })
+                setIsConfirming(false);
+                setIsConfirmed(true);
+                localStorage.removeItem("recipient");
+                localStorage.removeItem("amount");
+                localStorage.removeItem("tokenAddress");
+            } catch (err) {
+                const errMessage = getErrorMessage(err);
+                setErrorMessage(errMessage);
+                console.log("Error during airdrop:", err);
+                setIsConfirming(false);
+                return;
+            }
         
         } else {
             setIsConfirming(true);
             setIsConfirmed(false);
             // Airdropping tokens
-            await writeContractAsync({
-                abi: tsenderAbi,
-                address: tSenderAddress as `0x${string}`,
-                functionName: "airdropERC20",
-                args: [
-                    tokenAddress,
-                    // Comma or new line separated
-                    recipient.split(/[,\n]+/).map(addr => addr.trim()).filter(addr => addr !== ''),
-                    amount.split(/[,\n]+/).map(amt => amt.trim()).filter(amt => amt !== ''),
-                    BigInt(totalAmmount),
-                ],
-            });
-            setIsConfirming(false);
-            setIsConfirmed(true);
-            localStorage.removeItem("recipient");
-            localStorage.removeItem("amount");
-            localStorage.removeItem("tokenAddress");
+            try {
+                await writeContractAsync({
+                    abi: tsenderAbi,
+                    address: tSenderAddress as `0x${string}`,
+                    functionName: "airdropERC20",
+                    args: [
+                        tokenAddress,
+                        // Comma or new line separated
+                        recipient.split(/[,\n]+/).map(addr => addr.trim()).filter(addr => addr !== ''),
+                        amount.split(/[,\n]+/).map(amt => amt.trim()).filter(amt => amt !== ''),
+                        BigInt(totalAmmount),
+                    ],
+                });
+                setIsConfirming(false);
+                setIsConfirmed(true);
+                localStorage.removeItem("recipient");
+                localStorage.removeItem("amount");
+                localStorage.removeItem("tokenAddress");
+            } catch (err) {
+                const errMessage = getErrorMessage(err);
+                setErrorMessage(errMessage);
+                console.error("Error during airdrop:", err);
+                setIsConfirming(false);
+                return;
+            }
         }
     }
 
