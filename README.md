@@ -5,9 +5,9 @@ A simple, gas-efficient web app for sending ERC-20 tokens to multiple wallets in
 > Inspired by [TSender](https://github.com/Cyfrin/tsender)
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
-![Wagmi](https://img.shields.io/badge/Wagmi-2-blue?style=flat-square)
+![Wagmi](https://img.shields.io/badge/Wagmi-000?logo=wagmi&logoColor=fff)
 ![RainbowKit](https://img.shields.io/badge/RainbowKit-2-purple?style=flat-square)
-![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-%2338B2AC.svg?logo=tailwind-css&logoColor=white)
 
 ---
 
